@@ -1,0 +1,35 @@
+local ScriptName = "The Streets" -- Script Name here; ex : The Streets
+
+
+local request = request or syn and syn.request
+
+
+local FilePath = string.gsub(ScriptName, "%s", "%%20")
+local RepositoryPath = "https://raw.githubusercontent.com/34221asddfg-dfgs-249562945-sdfigae235-x/-u0948620496-0-WGJw40t98J4T0pt-43-u-j-T9348Pj6_-86-3j-69834j--3-j30946-w-EJt4w-49/main/p(0)ny!%40()!)(%40)(%24!()%40%24*!%40)%25(!*%23%40%25()%235%25*(%23%26%40%23(*%25%40%26%23)%25%40(*%23%25%26%40%23)(%25*%40%26W)D(%40%23HJH)D(%40*%23RHQWEQKFJwhe98r5w3NFweuffenpwe%20urWH33R9W3R8" .. FilePath .. "/"
+
+
+local Cached = {}
+function import(Name: string, ...)
+    Name = string.gsub(Name, "%s", "%%20")
+    if Cached[Name] then return Cached[Name] end
+    
+    local Url = RepositoryPath .. Name .. ".lua"
+    local Response = request({Url = Url})
+    
+    local Source, Result = loadstring(Response.Body, Name)
+    if not Source then
+        return warn(Result)
+    end
+    
+    local Success, Result, Traceback = xpcall(Source, function(Error: string)
+        warn(string.format("[%s]: %s", File, string.match(Error, "%d+.+")))
+        return false, Error, debug.traceback()
+    end, ...)
+    if not Success then return end
+
+    Cached[Name] = Result
+    return Result
+end
+
+getgenv().import = import
+import "Main"
